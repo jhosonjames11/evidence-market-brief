@@ -71,6 +71,38 @@ If there is no verified material update, output exactly `[SILENT]` when the host
 
 Do not place tokens, cookies, account details, positions, private chat IDs, or production schedule configuration in this repository.
 
+### Install in your agent
+
+There is no single universal “one-click” installer: each host discovers Skills differently. The reliable option is one `git clone` command into the host’s Skill directory; it preserves `SKILL.md`, templates, references, and examples together. These commands create a new directory and fail safely if that directory already exists.
+
+| Host | Install command | Then |
+| --- | --- | --- |
+| **Hermes Agent** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.hermes/skills/finance/evidence-market-brief` | Start a new task or reload the Skill catalog. |
+| **Codex** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.codex/skills/evidence-market-brief` | Start a new Codex task and invoke the Skill by its installed name or path. |
+| **Claude Code** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git .claude/skills/evidence-market-brief` | Start a new session in that project; confirm your Claude Code version supports project Skills. |
+| **OpenClaw** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git <your-openclaw-skills-directory>/evidence-market-brief` | Use OpenClaw’s configured Skill-discovery path, then reload or start a new task. |
+
+If your host has a native Skills/import UI, use it instead and select this repository URL:
+
+```text
+https://github.com/jhosonjames11/evidence-market-brief
+```
+
+Do not copy only `SKILL.md`: the linked templates and reference policies are part of the workflow. Do not overwrite an existing local Skill directory without reviewing its contents first.
+
+**Agent-install message.** For an agent that has Git and local file access, paste this message instead of manually running a command:
+
+```text
+Install the Evidence Market Brief Skill from:
+https://github.com/jhosonjames11/evidence-market-brief
+
+Use this host's standard Skills directory. Keep the full repository together,
+do not copy secrets or private configuration, do not modify existing Skills,
+and confirm the installed SKILL.md can be discovered before using it.
+```
+
+**Verify and update.** Ask the host: “Use Evidence Market Brief to produce a research-only brief for the last 12 hours. If there is no verified material update, return `[SILENT]`.” To update a Git-installed copy later, run `git -C <installed-skill-directory> pull --ff-only`, then re-open the agent task.
+
 ### Scheduling prompt
 
 Use one of the prompt files above. They are portable instructions, not a scheduler configuration: the host decides frequency, persistence, delivery target, and available web tools. A sensible starting cadence is every 6–12 hours, but only after a manual validation run. Never treat a retrieval or delivery failure as a silent result.
@@ -170,6 +202,38 @@ Evidence Market Brief 将公开新闻线索整理成简洁、可追溯、可复�
 4. 首次运行后，用[报告模板](templates/report.md)人工检查时间窗、来源链接、核验状态、事件指纹、风险和排除记录。
 
 不要在此仓库保存 token、cookie、账户信息、持仓、私有聊天 ID 或生产 cron 配置。
+
+### 一键安装到自己的 Agent
+
+不同 Agent 的 Skill 发现机制不同，因此不存在真正通用的“一个按钮安装”。最可靠的方式是用一条 `git clone` 命令将**整个仓库**放到对应的 Skill 目录；这样会同时保留 `SKILL.md`、模板、参考资料和示例。下列命令只创建新目录；若目录已存在会安全失败，不会覆盖原内容。
+
+| Agent | 安装命令 | 然后做什么 |
+| --- | --- | --- |
+| **Hermes Agent** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.hermes/skills/finance/evidence-market-brief` | 新开任务，或重新加载 Skill 列表。 |
+| **Codex** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.codex/skills/evidence-market-brief` | 新开 Codex 任务，并以已安装名称或路径调用 Skill。 |
+| **Claude Code** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git .claude/skills/evidence-market-brief` | 在该项目中新开会话；先确认你的 Claude Code 版本支持项目级 Skills。 |
+| **OpenClaw** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git <你的-openclaw-skills-目录>/evidence-market-brief` | 使用你在 OpenClaw 中配置的 Skill 发现路径，然后重新加载或新开任务。 |
+
+如果宿主提供了原生 Skills/导入界面，可以优先使用它，并填入这个仓库 URL：
+
+```text
+https://github.com/jhosonjames11/evidence-market-brief
+```
+
+不要只复制 `SKILL.md`，因为模板和来源政策也是工作流的一部分。不要覆盖已有的本地 Skill 目录；先检查目录内容和兼容性。
+
+**让 Agent 自行安装的消息。** 如果你的 Agent 能使用 Git 并访问本地文件，可以直接把下面这段话发给它：
+
+```text
+请安装 Evidence Market Brief Skill：
+https://github.com/jhosonjames11/evidence-market-brief
+
+请使用当前宿主的标准 Skills 目录，保留完整仓库；不要复制任何密钥、
+私有配置或生产数据；不要修改已有 Skill；安装后确认能发现并读取 SKILL.md，
+再开始使用。
+```
+
+**验证与更新。** 安装后可对 Agent 说：“使用 Evidence Market Brief 为最近 12 小时生成一份仅研究用途的简报；没有经过核验的重大新增时返回 `[SILENT]`。”更新 Git 安装副本时执行 `git -C <已安装的-skill-目录> pull --ff-only`，然后重新打开 Agent 任务。
 
 ### 定时任务提示词
 
