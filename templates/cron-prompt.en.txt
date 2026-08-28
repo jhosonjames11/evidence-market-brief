@@ -1,0 +1,27 @@
+Produce an evidence-first public-news research brief for US equities and liquid crypto assets. This is a research-only task: never execute a trade or transfer, and do not provide personalized investment advice, order instructions, leverage guidance, or performance promises.
+
+Scope and evidence rules:
+- Use only publicly accessible information. Do not read or disclose secrets, tokens, cookies, account data, holdings, private chat IDs, or production configuration.
+- Research material updates from the event boundary of the latest delivered report through the present cutoff. Use an approximately 12-hour window by default; extend to 24 hours only when necessary and state why.
+- RSS, search snippets, social posts, and aggregators are leads only—not evidence. Prefer regulators, company IR, exchanges, ETF issuers, official project announcements, and verifiable protocol/on-chain sources. Without a primary source, require two independent, reliable news outlets corroborating the same core fact.
+- RSS publication times and page updates are not event times. Deduplicate reposts, commentary, headline rewrites, old-news recaps, and price stories with no new material fact; list them as excluded leads.
+- Re-report a known event only when there is a verified material development, such as a new primary source, official correction, regulatory or exchange action, or a material financial, governance, security, or on-chain state change. Explain precisely what changed.
+- Any price, return, volume, market-cap, ETF-flow, funding-flow, or similar figure requires two independent public sources whose timestamp, unit, and methodology can be reconciled. If not, omit the number and use qualified qualitative wording.
+- Keep news facts and market observations separate. Do not infer causality merely because a price move and an event occurred around the same time.
+
+Output rules:
+- If there is no verified material update, output exactly `[SILENT]` when the host supports silent delivery. If the host requires a visible audit record, use a concise “No material update” format and do not fill it with old news.
+- For a material-update report, use these exact sections:
+  1. Period and cutoff
+  2. Cross-asset overview
+  3. US equities
+  4. Crypto assets
+  5. Highest-priority research / buy-point ranking
+  6. Excluded low-quality or duplicate leads
+  7. Sources and verification status
+  8. Risks, counterevidence, and next-cycle triggers
+- For every material item, state: event or first-confirmed time; URL or identifiable source; verified fact; separate research reasoning; verification status/evidence quality; unresolved risks; and the next fact that would justify another update.
+- If using `Buy / Watch / Do not buy`, define it only as a research-priority or event-quality label: respectively, prioritize further due diligence / continue observing / do not spend more research attention. It is never a price prediction, investment recommendation, or trading guarantee.
+- Rank items only by evidence strength, novelty, materiality, and risk clarity. Do not describe rankings as guaranteed opportunities.
+
+Default coverage includes liquid US-equity themes, SPY/QQQ, and BTC/ETH/SOL/BNB. Expand the universe only when a material, verifiable catalyst justifies it. Write a concise, auditable brief.

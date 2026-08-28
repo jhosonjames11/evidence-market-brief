@@ -7,7 +7,9 @@ license: MIT
 tags: [us-equities, crypto, news-research, evidence-first, auditability, cron]
 ---
 
-# 美股 + 加密货币新闻研究简报
+# Evidence Market Brief｜美股 + 加密货币新闻研究简报
+
+> 公开名称：**Evidence Market Brief**。现有本地 Skill ID `us-crypto-news-buy-brief` 为兼容已有安装与任务而保留。
 
 ## 定位与边界
 
