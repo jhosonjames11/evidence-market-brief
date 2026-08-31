@@ -73,35 +73,68 @@ Do not place tokens, cookies, account details, positions, private chat IDs, or p
 
 ### Install in your agent
 
-There is no single universal “one-click” installer: each host discovers Skills differently. The reliable option is one `git clone` command into the host’s Skill directory; it preserves `SKILL.md`, templates, references, and examples together. These commands create a new directory and fail safely if that directory already exists.
+There is no universal one-click installer: each host discovers Skills differently. A public Skill is agent instruction content, so **do not install from the mutable default branch and do not use a blind `git pull` update**. First select a reviewed, immutable **full 40-character commit SHA**. A release tag may help identify a release, but resolve it to—and pin—the full commit SHA; do not rely on a movable tag name or the branch tip. Until signed releases are published, obtain the reviewed SHA through a maintainer-trusted channel rather than from an unreviewed branch head.
 
-| Host | Install command | Then |
+Choose the target directory for your host:
+
+| Host | Set `SKILL_DIR` to | Then |
 | --- | --- | --- |
-| **Hermes Agent** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.hermes/skills/finance/evidence-market-brief` | Start a new task or reload the Skill catalog. |
-| **Codex** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.codex/skills/evidence-market-brief` | Start a new Codex task and invoke the Skill by its installed name or path. |
-| **Claude Code** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git .claude/skills/evidence-market-brief` | Start a new session in that project; confirm your Claude Code version supports project Skills. |
-| **OpenClaw** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git <your-openclaw-skills-directory>/evidence-market-brief` | Use OpenClaw’s configured Skill-discovery path, then reload or start a new task. |
+| **Hermes Agent** | `~/.hermes/skills/finance/evidence-market-brief` | Reload the Skill catalog or start a new task after verification. |
+| **Codex** | `~/.codex/skills/evidence-market-brief` | Start a new Codex task and invoke the installed Skill. |
+| **Claude Code** | `.claude/skills/evidence-market-brief` | Start a new session; confirm your Claude Code version supports project Skills. |
+| **OpenClaw** | `<your-openclaw-skills-directory>/evidence-market-brief` | Use the configured discovery path, then reload or start a new task. |
 
-If your host has a native Skills/import UI, use it instead and select this repository URL:
+Install the complete repository without checking out the default branch, then activate only the reviewed revision:
 
-```text
-https://github.com/jhosonjames11/evidence-market-brief
+```bash
+# Replace both placeholders. SKILL_REVISION must be a reviewed, full 40-character commit SHA.
+SKILL_REPOSITORY="https://github.com/jhosonjames11/evidence-market-brief.git"
+SKILL_REVISION="<FULL_40_CHARACTER_COMMIT_SHA>"
+SKILL_DIR="$HOME/.hermes/skills/finance/evidence-market-brief" # replace for your host
+
+# Refuse an existing target; inspect it manually instead of overwriting it.
+test ! -e "$SKILL_DIR" || { echo "Target already exists: $SKILL_DIR"; exit 1; }
+git clone --no-checkout "$SKILL_REPOSITORY" "$SKILL_DIR"
+git -C "$SKILL_DIR" fetch origin "$SKILL_REVISION"
+git -C "$SKILL_DIR" checkout --detach "$SKILL_REVISION"
+test "$(git -C "$SKILL_DIR" rev-parse HEAD)" = "$SKILL_REVISION"
 ```
 
-Do not copy only `SKILL.md`: the linked templates and reference policies are part of the workflow. Do not overwrite an existing local Skill directory without reviewing its contents first.
+Only reload or invoke the Skill after the final check succeeds. Do not copy only `SKILL.md`: the linked templates and reference policies are part of the workflow. Use a native Skills/import UI only when it displays and pins the same reviewed full commit SHA; a UI that accepts only a repository or branch URL has the same mutable-branch risk.
 
 **Agent-install message.** For an agent that has Git and local file access, paste this message instead of manually running a command:
 
 ```text
-Install the Evidence Market Brief Skill from:
-https://github.com/jhosonjames11/evidence-market-brief
+Install Evidence Market Brief from https://github.com/jhosonjames11/evidence-market-brief,
+but only at this reviewed full 40-character commit SHA:
+<FULL_40_CHARACTER_COMMIT_SHA>
 
-Use this host's standard Skills directory. Keep the full repository together,
-do not copy secrets or private configuration, do not modify existing Skills,
-and confirm the installed SKILL.md can be discovered before using it.
+Do not install or update from a branch tip. Clone with --no-checkout, fetch and
+checkout that detached SHA, verify that `git rev-parse HEAD` equals it, then use
+this host's standard Skills directory. Keep the full repository together; do
+not copy secrets or private configuration, modify existing Skills, or activate
+the Skill before the revision check succeeds.
 ```
 
-**Verify and update.** Ask the host: “Use Evidence Market Brief to produce a research-only brief for the last 12 hours. If there is no verified material update, return `[SILENT]`.” To update a Git-installed copy later, run `git -C <installed-skill-directory> pull --ff-only`, then re-open the agent task.
+**Verify and update.** Ask the host: “Use Evidence Market Brief to produce a research-only brief for the last 12 hours. If there is no verified material update, return `[SILENT]`.” Never update with `git pull`. Instead, select a new reviewed full commit SHA, confirm the expected `origin` URL and a clean working tree, fetch it, inspect the complete diff, and only then activate it:
+
+```bash
+SKILL_REPOSITORY="https://github.com/jhosonjames11/evidence-market-brief.git"
+SKILL_DIR="$HOME/.hermes/skills/finance/evidence-market-brief" # replace for your host
+NEXT_SKILL_REVISION="<NEXT_REVIEWED_FULL_40_CHARACTER_COMMIT_SHA>"
+CURRENT_SKILL_REVISION="$(git -C "$SKILL_DIR" rev-parse HEAD)"
+
+test "$(git -C "$SKILL_DIR" remote get-url origin)" = "$SKILL_REPOSITORY"
+git -C "$SKILL_DIR" status --short # must produce no output
+git -C "$SKILL_DIR" fetch origin "$NEXT_SKILL_REVISION"
+git -C "$SKILL_DIR" diff "$CURRENT_SKILL_REVISION" "$NEXT_SKILL_REVISION" # inspect before continuing
+
+# Run only after reviewing the diff and choosing to accept it.
+git -C "$SKILL_DIR" checkout --detach "$NEXT_SKILL_REVISION"
+test "$(git -C "$SKILL_DIR" rev-parse HEAD)" = "$NEXT_SKILL_REVISION"
+```
+
+Re-open the agent task only after the final check succeeds.
 
 ### Scheduling prompt
 
@@ -205,35 +238,67 @@ Evidence Market Brief 将公开新闻线索整理成简洁、可追溯、可复�
 
 ### 一键安装到自己的 Agent
 
-不同 Agent 的 Skill 发现机制不同，因此不存在真正通用的“一个按钮安装”。最可靠的方式是用一条 `git clone` 命令将**整个仓库**放到对应的 Skill 目录；这样会同时保留 `SKILL.md`、模板、参考资料和示例。下列命令只创建新目录；若目录已存在会安全失败，不会覆盖原内容。
+不同 Agent 的 Skill 发现机制不同，因此不存在真正通用的“一个按钮安装”。公开 Skill 属于会被 Agent 解释执行的指令内容，所以**不要从可变的默认分支安装，也不要盲目执行 `git pull` 更新**。先选择一个经过审阅、不可变的**完整 40 位 commit SHA**。发布 tag 只能帮助定位版本；应解析并固定到完整 commit SHA，不能只依赖可能被移动的 tag 名称或分支最新提交。在签名发布版本出现前，应从维护者信任的渠道取得已审阅 SHA，而不是从未审阅的分支头取得。
 
-| Agent | 安装命令 | 然后做什么 |
+先为你的宿主选择目标目录：
+
+| Agent | 将 `SKILL_DIR` 设为 | 然后做什么 |
 | --- | --- | --- |
-| **Hermes Agent** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.hermes/skills/finance/evidence-market-brief` | 新开任务，或重新加载 Skill 列表。 |
-| **Codex** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git ~/.codex/skills/evidence-market-brief` | 新开 Codex 任务，并以已安装名称或路径调用 Skill。 |
-| **Claude Code** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git .claude/skills/evidence-market-brief` | 在该项目中新开会话；先确认你的 Claude Code 版本支持项目级 Skills。 |
-| **OpenClaw** | `git clone https://github.com/jhosonjames11/evidence-market-brief.git <你的-openclaw-skills-目录>/evidence-market-brief` | 使用你在 OpenClaw 中配置的 Skill 发现路径，然后重新加载或新开任务。 |
+| **Hermes Agent** | `~/.hermes/skills/finance/evidence-market-brief` | 核验完成后重新加载 Skill 列表，或新开任务。 |
+| **Codex** | `~/.codex/skills/evidence-market-brief` | 核验完成后新开 Codex 任务并调用已安装的 Skill。 |
+| **Claude Code** | `.claude/skills/evidence-market-brief` | 新开会话；先确认 Claude Code 版本支持项目级 Skills。 |
+| **OpenClaw** | `<你的-openclaw-skills-目录>/evidence-market-brief` | 使用已配置的发现目录，然后重新加载或新开任务。 |
 
-如果宿主提供了原生 Skills/导入界面，可以优先使用它，并填入这个仓库 URL：
+完整安装仓库但不要检出默认分支；只在已审阅版本通过核验后激活：
 
-```text
-https://github.com/jhosonjames11/evidence-market-brief
+```bash
+# 替换两个占位符。SKILL_REVISION 必须是经过审阅的完整 40 位 commit SHA。
+SKILL_REPOSITORY="https://github.com/jhosonjames11/evidence-market-brief.git"
+SKILL_REVISION="<完整_40_位_COMMIT_SHA>"
+SKILL_DIR="$HOME/.hermes/skills/finance/evidence-market-brief" # 按宿主替换
+
+# 若目标已存在则拒绝操作；人工检查后再决定，不要覆盖。
+test ! -e "$SKILL_DIR" || { echo "目标已存在：$SKILL_DIR"; exit 1; }
+git clone --no-checkout "$SKILL_REPOSITORY" "$SKILL_DIR"
+git -C "$SKILL_DIR" fetch origin "$SKILL_REVISION"
+git -C "$SKILL_DIR" checkout --detach "$SKILL_REVISION"
+test "$(git -C "$SKILL_DIR" rev-parse HEAD)" = "$SKILL_REVISION"
 ```
 
-不要只复制 `SKILL.md`，因为模板和来源政策也是工作流的一部分。不要覆盖已有的本地 Skill 目录；先检查目录内容和兼容性。
+只有最后一项检查成功后，才重新加载或调用这个 Skill。不要只复制 `SKILL.md`，因为模板和来源政策也是工作流的一部分。只有原生 Skills/导入界面能显示并固定相同的、已审阅的完整 commit SHA 时才可使用；若它只能接受仓库或分支 URL，仍有可变分支风险。
 
 **让 Agent 自行安装的消息。** 如果你的 Agent 能使用 Git 并访问本地文件，可以直接把下面这段话发给它：
 
 ```text
-请安装 Evidence Market Brief Skill：
-https://github.com/jhosonjames11/evidence-market-brief
+请从 https://github.com/jhosonjames11/evidence-market-brief 安装
+Evidence Market Brief Skill，但只能使用这个经过审阅的完整 40 位 commit SHA：
+<完整_40_位_COMMIT_SHA>
 
-请使用当前宿主的标准 Skills 目录，保留完整仓库；不要复制任何密钥、
-私有配置或生产数据；不要修改已有 Skill；安装后确认能发现并读取 SKILL.md，
-再开始使用。
+不要从分支最新提交安装或更新。请使用 --no-checkout 克隆，抓取并以 detached
+状态检出该 SHA，确认 `git rev-parse HEAD` 与它一致后，再放入当前宿主的标准
+Skills 目录。请保留完整仓库；不要复制密钥、私有配置或生产数据，不要修改已有
+Skill，也不要在版本检查成功前激活此 Skill。
 ```
 
-**验证与更新。** 安装后可对 Agent 说：“使用 Evidence Market Brief 为最近 12 小时生成一份仅研究用途的简报；没有经过核验的重大新增时返回 `[SILENT]`。”更新 Git 安装副本时执行 `git -C <已安装的-skill-目录> pull --ff-only`，然后重新打开 Agent 任务。
+**验证与更新。** 安装后可对 Agent 说：“使用 Evidence Market Brief 为最近 12 小时生成一份仅研究用途的简报；没有经过核验的重大新增时返回 `[SILENT]`。”绝不要用 `git pull` 更新。应先选择新的、已审阅的完整 commit SHA，确认 `origin` URL 正确且工作区干净，抓取新版本并完整审阅差异后，才激活它：
+
+```bash
+SKILL_REPOSITORY="https://github.com/jhosonjames11/evidence-market-brief.git"
+SKILL_DIR="$HOME/.hermes/skills/finance/evidence-market-brief" # 按宿主替换
+NEXT_SKILL_REVISION="<下一个已审阅的完整_40_位_COMMIT_SHA>"
+CURRENT_SKILL_REVISION="$(git -C "$SKILL_DIR" rev-parse HEAD)"
+
+test "$(git -C "$SKILL_DIR" remote get-url origin)" = "$SKILL_REPOSITORY"
+git -C "$SKILL_DIR" status --short # 必须没有输出
+git -C "$SKILL_DIR" fetch origin "$NEXT_SKILL_REVISION"
+git -C "$SKILL_DIR" diff "$CURRENT_SKILL_REVISION" "$NEXT_SKILL_REVISION" # 继续前完整审阅
+
+# 仅在审阅差异并决定接受后执行。
+git -C "$SKILL_DIR" checkout --detach "$NEXT_SKILL_REVISION"
+test "$(git -C "$SKILL_DIR" rev-parse HEAD)" = "$NEXT_SKILL_REVISION"
+```
+
+只有最后一项检查成功后，才重新打开 Agent 任务。
 
 ### 定时任务提示词
 
