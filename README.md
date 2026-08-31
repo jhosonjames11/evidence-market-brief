@@ -4,9 +4,9 @@
 >
 > 面向美股与高流动性加密资产的证据优先公开新闻研究简报。
 
-**Suggested GitHub repository:** `evidence-market-brief`
+Evidence Market Brief is a reusable **Agent Skill** for evidence-first market-news research.
 
-**Existing local skill ID:** `us-crypto-news-buy-brief` (kept for backward compatibility)
+Evidence Market Brief 是一个可复用的 **Agent Skill**，用于证据优先的市场新闻研究。
 
 [English](#english) · [中文](#中文) · [Skill specification](SKILL.md) · [Chinese schedule prompt](templates/cron-prompt.txt) · [English schedule prompt](templates/cron-prompt.en.txt)
 
